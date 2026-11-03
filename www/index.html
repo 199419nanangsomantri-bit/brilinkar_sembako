@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0866c6">
+<title>AR Sembako — Dashboard Agen</title>
+<style>
+:root{--blue:#0866c6;--blue2:#0755a5;--ink:#172033;--muted:#738095;--bg:#f3f6fb;--line:#e8edf4;--green:#15966b;--red:#d94b58;--gold:#e7ad19;--card:#fff;--shadow:0 5px 18px rgba(20,42,76,.09)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);font-size:14px}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:520px;min-height:100vh;margin:auto;background:#f7f9fc;position:relative;padding-bottom:82px;box-shadow:0 0 35px #152b4a12}
+.top{background:linear-gradient(145deg,#0872d7,#064fa8);color:#fff;padding:20px 20px 29px;border-radius:0 0 25px 25px}
+.status{display:flex;justify-content:space-between;font-weight:700;font-size:12px;opacity:.95;margin-bottom:23px}
+.brandrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:10px}.logo{width:42px;height:42px;border-radius:13px;background:#fff;color:var(--blue);display:grid;place-items:center;font-weight:900;font-size:22px;box-shadow:0 3px 9px #003b8033}.brand strong{font-size:21px;letter-spacing:-.6px}.brand small{display:block;font-size:12px;opacity:.9;margin-top:1px}
+.topactions{display:flex;gap:17px;align-items:center}.iconbtn{border:0;background:transparent;color:inherit;font-size:21px;padding:4px}.avatar{width:37px;height:37px;border-radius:50%;background:#ffffffd9;color:#607087;display:grid;place-items:center;font-size:20px}
+.welcome{background:#fff;color:var(--ink);border-radius:17px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 7px 18px #002f7024;margin-bottom:-46px;gap:8px}.welcome strong{font-size:17px}.welcome small{display:block;color:var(--muted);margin-top:4px}.active{background:#e3f6ed;color:#13885e;border-radius:30px;padding:6px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+main{padding:62px 17px 20px}.section{margin-bottom:20px}.sectionhead{display:flex;align-items:center;justify-content:space-between;margin:0 2px 12px}.section h2,.sectionhead h2{font-size:18px;margin:0;font-weight:800;letter-spacing:-.35px}.muted{color:var(--muted)}.small{font-size:11px}
+.balancegrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.balance{border-radius:17px;padding:15px 14px;box-shadow:var(--shadow);min-height:132px}.balance.cash{background:linear-gradient(140deg,#e1f6e9,#ccebd9)}.balance.bank{background:linear-gradient(140deg,#e2efff,#cbdfff)}.balicon{font-size:23px;margin-bottom:8px}.balance label{font-weight:700;font-size:13px}.money{font-size:18px;font-weight:850;letter-spacing:-.5px;margin:7px 0 4px;white-space:nowrap}.balance small{font-size:10px;color:#526175}
+.summary{background:#fff;border-radius:17px;padding:16px 13px;box-shadow:var(--shadow)}.summarytitle{text-align:center;font-size:17px;font-weight:800;margin:0 0 15px}.summarygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.metric{display:flex;gap:7px;align-items:center;min-width:0}.metricicon{width:29px;height:29px;border-radius:9px;display:grid;place-items:center;background:#e8f2ff;color:var(--blue);font-size:16px;flex:none}.metric:nth-child(2) .metricicon{background:#fff0d7;color:#d88b13}.metric:nth-child(3) .metricicon{background:#eee8ff;color:#7952c9}.metric label{font-size:10px;color:#647187;display:block;white-space:nowrap}.metric strong{font-size:12px;display:block;margin-top:3px;white-space:nowrap}
+.summarygrid.grid2{grid-template-columns:1fr 1fr;gap:16px 10px}
+.summarygrid.grid2 .metric:nth-child(3) .metricicon{background:#fff0d7;color:#d88b13}
+.summarygrid.grid2 .metric:nth-child(4) .metricicon{background:#eee8ff;color:#7952c9}
+.metric.nobadge{padding-left:4px}
+.metric.nobadge>div{min-width:0;flex:1}
+.metric.nobadge strong{font-size:14px;letter-spacing:-.2px}
+.suggestwrap{position:relative}
+.suggestlist{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;background:#fff;border:1px solid #dce3ec;border-radius:11px;box-shadow:var(--shadow);max-height:190px;overflow:auto}
+.suggestlist.open{display:block}
+.suggestitem{display:block;width:100%;text-align:left;border:0;background:#fff;padding:10px 12px;font-size:13px;font-weight:700;color:var(--ink)}
+.suggestitem small{display:block;font-weight:500;font-size:10px;color:var(--muted);margin-top:2px}
+.suggestitem+.suggestitem{border-top:1px solid #eef2f7}
+.suggestitem:active{background:#eaf2fc}
+.quickgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.quick{border:0;border-radius:14px;color:white;padding:13px 5px 11px;box-shadow:0 5px 12px #122b4b20;font-weight:700}.quick span{display:block;font-size:24px;margin-bottom:4px}.quick.withdraw{background:#0866c6}.quick.deposit{background:#36a66b}.quick.transfer{background:#eab21d}
+.panel{background:#fff;border-radius:17px;padding:15px;box-shadow:var(--shadow)}.charthead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.charthead h2{font-size:17px;margin:0 0 4px}.chart{width:100%;height:145px;display:block;margin-top:8px}.chartlabels{display:flex;justify-content:space-between;color:#66758b;font-size:10px;margin-top:-1px}.trend{font-size:11px;color:var(--green);font-weight:700;margin-top:8px}
+.tabs{display:flex;gap:8px;margin:12px 0}.tab{border:1px solid #d9e0e9;border-radius:30px;padding:8px 15px;background:white;color:#657186;flex:1}.tab.activeTab{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+.reportlist{background:#fff;border-radius:16px;padding:5px 13px;box-shadow:var(--shadow)}.reportrow{display:flex;align-items:center;gap:11px;padding:12px 2px;border-bottom:1px solid var(--line)}.reportrow:last-child{border:0}.doc{font-size:23px;color:#1767ae}.reportrow strong{display:block;font-size:13px}.reportrow small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.reportvalue{margin-left:auto;text-align:right;font-weight:700;font-size:11px;white-space:nowrap}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);height:72px;background:#fff;border-top:1px solid #e8edf4;display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:env(safe-area-inset-bottom);z-index:5}.nav button{border:0;background:white;color:#7c8796;font-size:11px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.nav button b{font-size:21px;font-weight:500}.nav button.selected{color:var(--blue)}
+.page{display:none}.page.show{display:block}
+.toolbar{display:flex;gap:8px;margin:12px 0}.field{margin-bottom:13px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:#43516a}.field input,.field select,.field textarea{width:100%;border:1px solid #dce3ec;background:#fff;border-radius:11px;padding:12px;color:var(--ink);outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #0866c61a}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.primary,.secondary,.danger{border:0;border-radius:11px;padding:12px 15px;font-weight:750}.primary{background:var(--blue);color:#fff}.secondary{background:#eaf2fc;color:var(--blue)}.danger{background:#fff0f1;color:var(--red)}.full{width:100%}
+.txlist{display:flex;flex-direction:column;gap:9px}.tx{background:#fff;border-radius:13px;padding:12px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 9px #142c4c0a}.txicon{width:37px;height:37px;border-radius:11px;display:grid;place-items:center;background:#e9f2ff;color:var(--blue);font-size:18px}.txinfo{flex:1;min-width:0}.txinfo strong{display:block;font-size:13px}.txinfo small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.txamt{text-align:right;font-weight:800;font-size:12px}.txamt small{display:block;color:var(--green);font-weight:600;font-size:10px;margin-top:4px}
+.empty{text-align:center;padding:28px 10px;color:var(--muted)}.empty b{display:block;font-size:28px;margin-bottom:8px}
+.modalback{position:fixed;inset:0;background:#0d1c32a6;display:none;align-items:flex-end;justify-content:center;z-index:10;padding:12px}.modalback.open{display:flex}.modal{width:min(520px,100%);max-height:90vh;overflow:auto;background:#f8fafd;border-radius:22px 22px 16px 16px;padding:19px}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.modalhead h2{margin:0;font-size:18px}.close{border:0;background:#e8edf4;border-radius:50%;width:31px;height:31px;font-size:18px}
+.notice{background:#fff8e4;border:1px solid #f5e3ac;color:#7d5b0d;border-radius:12px;padding:10px;font-size:11px;line-height:1.5;margin-bottom:13px}
+@media(min-width:600px){body{padding:20px 0}.app{border-radius:24px;overflow:hidden;min-height:calc(100vh - 40px)}.nav{bottom:20px;border-radius:0 0 24px 24px}.modalback{align-items:center}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="status"><span id="clock">09:41</span><span>▮▮▮　◉　82%</span></div>
+  <div class="brandrow">
+    <div class="brand"><div class="logo">B</div><div><strong>BRILink</strong><small>AR Sembako</small></div></div>
+    <div class="topactions"><button class="iconbtn" aria-label="Notifikasi">♢</button><div class="avatar">●</div></div>
+  </div>
+  <div class="welcome"><div><strong>Halo, Agen!</strong><small id="shopSubtitle">AR Sembako</small></div><span class="active">● Online · Aktif</span></div>
+</header>
+<main>
+  <section id="homePage" class="page show">
+    <div class="section">
+      <div class="sectionhead"><h2>Saldo Wallet</h2><button class="iconbtn" style="color:#0866c6" onclick="openSettings()" title="Atur saldo awal">⚙</button></div>
+      <div class="balancegrid">
+        <div class="balance cash"><div class="balicon">▣</div><label>Saldo Cash</label><div class="money" id="cashBalance">Rp 5.100.000</div><small>Tersedia untuk transaksi tunai</small></div>
+        <div class="balance bank"><div class="balicon">▤</div><label>Saldo Rekening</label><div class="money" id="bankBalance">Rp 3.130.000</div><small id="bankLabel">Rekening BRI</small></div>
+      </div>
+    </div>
+    <div class="section panel">
+      <div class="summarytitle">Ringkasan Hari Ini</div>
+      <div class="summarygrid grid2">
+        <div class="metric nobadge"><div><label>Saldo Awal (Buka)</label><strong id="openingBalance">Rp 8.230.000</strong></div></div>
+        <div class="metric nobadge"><div><label>Saldo Akhir (Tutup)</label><strong id="closingBalance">Rp 8.230.000</strong></div></div>
+        <div class="metric"><div class="metricicon">▤</div><div><label>Total Fee</label><strong id="todayFee">Rp 0</strong></div></div>
+        <div class="metric"><div class="metricicon">↗</div><div><label>Jumlah Transaksi</label><strong id="todayCount">0 Transaksi</strong></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="sectionhead"><h2>Aksi Cepat</h2></div>
+      <div class="quickgrid">
+        <button class="quick withdraw" onclick="openTransaction('Tarik Tunai')"><span>♧</span>Tarik</button>
+        <button class="quick deposit" onclick="openTransaction('Setor Tunai')"><span>↑</span>Setor</button>
+        <button class="quick transfer" onclick="openTransaction('Transfer')"><span>↪</span>Transfer</button>
+      </div>
+    </div>
+    <div class="section panel">
+      <div class="charthead"><div><h2>Grafik Fee Mingguan</h2><div class="muted small" id="weekPeriod">7 hari terakhir</div></div><span class="small muted">Fee (Rp)</span></div>
+      <svg class="chart" id="weekChart" viewBox="0 0 440 145" preserveAspectRatio="none" aria-label="Grafik fee mingguan"></svg>
+      <div class="chartlabels"><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span></div>
+      <div class="trend" id="trendText">Catat transaksi untuk melihat perkembangan fee.</div>
+    </div>
+    <div class="section">
+      <div class="sectionhead"><h2>Laporan Lengkap</h2><button class="iconbtn" style="color:#0866c6" onclick="showPage('reportsPage','reports')">Lihat ›</button></div>
+      <div class="tabs"><button class="tab activeTab" data-period="daily" onclick="setReportPeriod('daily',this)">Harian</button><button class="tab" data-period="monthly" onclick="setReportPeriod('monthly',this)">Bulanan</button><button class="tab" data-period="yearly" onclick="setReportPeriod('yearly',this)">Tahunan</button></div>
+      <div class="reportlist" id="reportPreview"></div>
+    </div>
+  </section>
+
+  <section id="transactionsPage" class="page">
+    <div class="sectionhead"><h2>Riwayat Transaksi</h2><button class="primary" onclick="openTransaction()">＋ Transaksi</button></div>
+    <div class="toolbar"><input id="searchTx" placeholder="Cari transaksi / nama..." oninput="renderTransactions()" style="min-width:0;flex:1;border:1px solid #dce3ec;border-radius:11px;padding:11px"><select id="filterTx" onchange="renderTransactions()" style="border:1px solid #dce3ec;border-radius:11px;padding:8px"><option value="all">Semua</option><option>Tarik Tunai</option><option>Setor Tunai</option><option>Transfer Bank</option><option>E-Wallet</option><option>PPOB (Pulsa/Token)</option></select></div>
+    <div class="txlist" id="txList"></div>
+  </section>
+
+  <section id="reportsPage" class="page">
+    <div class="sectionhead"><h2>Laporan & Analisis</h2><button class="secondary" onclick="exportCSV()">Ekspor CSV</button></div>
+    <div class="panel section">
+      <div class="field"><label>Periode laporan</label><select id="reportFilter" onchange="renderReports()"><option value="today">Hari ini</option><option value="week">7 hari terakhir</option><option value="month">Bulan ini</option><option value="year">Tahun ini</option><option value="all">Semua data</option></select></div>
+      <div class="summarygrid">
+        <div class="metric"><div class="metricicon">▤</div><div><label>Total Fee</label><strong id="reportFee">Rp 0</strong></div></div>
+        <div class="metric"><div class="metricicon">↗</div><div><label>Transaksi</label><strong id="reportCount">0</strong></div></div>
+        <div class="metric"><div class="metricicon">◎</div><div><label>Nilai transaksi</label><strong id="reportVolume">Rp 0</strong></div></div>
+      </div>
+    </div>
+    <div class="panel section"><h2 style="font-size:16px;margin:0 0 8px">Rincian berdasarkan jenis</h2><div id="reportBreakdown"></div></div>
+    <div class="sectionhead"><h2>Semua transaksi</h2><button class="secondary" onclick="printReport()">Cetak</button></div>
+    <div class="txlist" id="reportTxList"></div>
+  </section>
+
+  <section id="profilePage" class="page">
+    <div class="sectionhead"><h2>Profil Agen</h2></div>
+    <div class="panel section">
+      <div class="field"><label>Nama toko / agen</label><input id="profileShop" placeholder="Nama toko"></div>
+      <div class="field"><label>Nama agen</label><input id="profileAgent" placeholder="Nama agen"></div>
+      <div class="field"><label>Nomor rekening (opsional, hanya label)</label><input id="profileAccount" placeholder="Contoh: **** 8845"></div>
+      <div class="field"><label>Saldo cash saat mulai</label><input id="profileCash" type="number" min="0"></div>
+      <div class="field"><label>Saldo rekening saat mulai</label><input id="profileBank" type="number" min="0"></div>
+      <div class="formgrid">
+        <div class="field"><label>Jam Buka Warung</label><input id="profileOpen" type="time" value="05:00"></div>
+        <div class="field"><label>Jam Tutup Warung</label><input id="profileClose" type="time" value="20:00"></div>
+      </div>
+      <button class="primary full" onclick="saveProfile()">Simpan Pengaturan</button>
+    </div>
+    <div class="notice">Aplikasi ini menyimpan catatan secara lokal di perangkat. Data tidak otomatis tersinkron ke bank atau perangkat lain. Buat ekspor CSV secara berkala sebagai cadangan.</div>
+    <div class="panel section">
+      <h2 style="font-size:16px;margin:0 0 10px">Pengelolaan data</h2>
+      <button class="secondary full" onclick="openContacts()" style="margin-bottom:9px">Buku Kontak Pelanggan</button>
+      <button class="secondary full" onclick="backupData()" style="margin-bottom:9px">⬇️ Cadangkan Data (Backup)</button>
+      <button class="secondary full" onclick="triggerRestore()" style="margin-bottom:9px">⬆️ Pulihkan Data (Restore)</button>
+      <input type="file" id="restoreFile" accept=".json,application/json" hidden onchange="restoreData(event)">
+      <button class="secondary full" onclick="exportCSV()" style="margin-bottom:9px">Unduh cadangan transaksi (CSV)</button>
+      <button class="danger full" onclick="resetData()">Hapus semua transaksi & kembalikan saldo awal</button>
+    </div>
+    <div class="muted small" style="text-align:center">AR Sembako · Prototype pencatatan agen · Offline</div>
+  </section>
+</main>
+<nav class="nav">
+  <button class="selected" data-page="homePage" onclick="showPage('homePage','home')"><b>⌂</b>Beranda</button>
+  <button data-page="transactionsPage" onclick="showPage('transactionsPage','transactions')"><b>▱</b>Transaksi</button>
+  <button data-page="reportsPage" onclick="showPage('reportsPage','reports')"><b>▥</b>Laporan</button>
+  <button data-page="profilePage" onclick="showPage('profilePage','profile')"><b>●</b>Profil</button>
+</nav>
+</div>
+
+<div class="modalback" id="txModal" onclick="if(event.target===this)closeModal()">
+ <div class="modal">
+  <div class="modalhead"><h2 id="modalTitle">Transaksi Baru</h2><button class="close" onclick="closeModal()">×</button></div>
+  <div class="notice">Masukkan transaksi yang sudah dilakukan. Catatan ini tidak mengirim uang atau menjalankan transaksi bank.</div>
+  <form id="txForm" onsubmit="saveTransaction(event)">
+   <div class="field"><label>Jenis transaksi</label><select id="txType" required onchange="onTypeChange()"><option>Tarik Tunai</option><option>Setor Tunai</option><option>Transfer Bank</option><option>E-Wallet</option><option>PPOB (Pulsa/Token)</option></select></div>
+   <div class="field" id="txProviderField" style="display:none"><label>Provider E-Wallet</label><select id="txProvider"><option value="">Pilih provider</option><option>DANA</option><option>OVO</option><option>GoPay</option><option>ShopeePay</option><option>LinkAja</option></select></div>
+   <div class="field"><label>Nominal transaksi (Rp)</label><input id="txAmount" type="number" min="1" step="1" required placeholder="Contoh: 500000"><div class="muted small" style="margin-top:6px">Sistem akan menghitung pergerakan Kas Tunai dan Deposit secara otomatis.</div></div>
+   <div class="field"><label>Fee / admin (Rp)</label><input id="txFee" type="number" min="0" step="500" value="5000" required></div>
+   <div class="field"><label>Nama pelanggan / tujuan (opsional)</label><div class="suggestwrap"><input id="txCustomer" placeholder="Nama pelanggan" autocomplete="off" oninput="showCustomerSuggest()" onfocus="showCustomerSuggest()" onblur="setTimeout(hideCustomerSuggest,200)"><div class="suggestlist" id="custSuggest"></div></div></div>
+   <div class="field"><label>No. HP (opsional)</label><input id="txPhone" type="tel" inputmode="tel" placeholder="Contoh: 08123456789"></div>
+   <div class="field"><label>No. Rekening / No. E-Wallet tujuan (opsional)</label><input id="txAccount" inputmode="numeric" placeholder="Nomor rekening atau e-wallet"></div>
+   <div class="field"><label>Catatan (opsional)</label><textarea id="txNote" rows="2" placeholder="Keterangan tambahan"></textarea></div>
+   <div class="field"><label>Tanggal dan waktu</label><input id="txDate" type="datetime-local" required><div id="txCutoffHint" class="muted small" style="margin-top:6px"></div></div>
+   <button class="primary full" type="submit">Simpan Transaksi</button>
+  </form>
+ </div>
+</div>
+<div class="modalback" id="contactModal" onclick="if(event.target===this)closeContacts()">
+ <div class="modal">
+  <div class="modalhead"><h2>Buku Kontak Pelanggan</h2><button class="close" onclick="closeContacts()">×</button></div>
+  <div id="contactList"></div>
+ </div>
+</div>
+<script>
+const KEY='ar_sembako_agent_v1';
+const DEFAULT_OPEN='05:00',DEFAULT_CLOSE='20:00';
+const timeOk=v=>/^([01]\d|2[0-3]):[0-5]\d$/.test(String(v||''));
+const toMin=v=>{const a=String(v).split(':');return (+a[0])*60+(+a[1])};
+const TYPES=['Tarik Tunai','Setor Tunai','Transfer Bank','E-Wallet','PPOB (Pulsa/Token)'];
+/* ===== Toast & dialog kustom (pengganti alert/confirm). Gayanya diinjeksi dari JS; HTML/CSS asli tidak diubah ===== */
+(function(){const st=document.createElement('style');st.textContent=
+'.toastwrap{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom));width:min(480px,calc(100% - 28px));z-index:30;display:flex;flex-direction:column;gap:8px;pointer-events:none}'+
+'.toast{display:flex;align-items:center;gap:10px;background:#172033;color:#fff;border-radius:14px;padding:12px 14px;font-size:13px;font-weight:650;box-shadow:0 8px 22px #0d1c3255;opacity:0;transform:translateY(10px);transition:opacity .25s,transform .25s}'+
+'.toast.in{opacity:1;transform:none}'+
+'.toast b{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;background:#15966b}'+
+'.toast.err b{background:#d94b58}'+
+'.dlgmsg{margin:0 0 18px;line-height:1.55;color:#43516a;font-size:13px}';
+document.head.appendChild(st)})();
+function showToast(msg,type){
+ let w=document.getElementById('toastWrap');
+ if(!w){w=document.createElement('div');w.id='toastWrap';w.className='toastwrap';w.setAttribute('aria-live','polite');document.body.appendChild(w)}
+ while(w.children.length>=3)w.firstChild.remove();
+ const t=document.createElement('div');t.className='toast'+(type==='error'?' err':'');
+ const i=document.createElement('b');i.textContent=type==='error'?'!':'✓';
+ const s=document.createElement('span');s.textContent=msg;
+ t.appendChild(i);t.appendChild(s);w.appendChild(t);
+ requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('in')));
+ setTimeout(()=>{t.classList.remove('in');setTimeout(()=>t.remove(),300)},type==='error'?3600:2600);
+}
+let dlgDone=null;
+function dialog(o){
+ return new Promise(resolve=>{
+  if(dlgDone)dlgDone(false);
+  let back=document.getElementById('dlgBack');
+  if(!back){
+   back=document.createElement('div');back.id='dlgBack';back.className='modalback';back.style.zIndex=20;
+   back.innerHTML='<div class="modal" role="dialog" aria-modal="true"><div class="modalhead"><h2 id="dlgTitle"></h2></div><p class="dlgmsg" id="dlgMsg"></p><div class="formgrid" id="dlgBtns"></div></div>';
+   document.body.appendChild(back);
+  }
+  const single=!!o.single,btns=back.querySelector('#dlgBtns');
+  back.querySelector('#dlgTitle').textContent=o.title||'Konfirmasi';
+  back.querySelector('#dlgMsg').textContent=o.message||'';
+  btns.innerHTML='';btns.style.gridTemplateColumns=single?'1fr':'1fr 1fr';
+  const done=v=>{if(dlgDone!==done)return;dlgDone=null;back.classList.remove('open');resolve(v)};
+  dlgDone=done;
+  const mk=(label,cls,val)=>{const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=label;b.onclick=()=>done(val);return b};
+  if(!single)btns.appendChild(mk(o.no||'Tidak','secondary',false));
+  btns.appendChild(mk(o.yes||'Ya',o.danger?'danger':'primary',true));
+  back.onclick=e=>{if(e.target===back)done(single)};
+  back.classList.add('open');
+ });
+}
+const appConfirm=(title,message,yes,no,danger)=>dialog({title,message,yes,no,danger});
+const appAlert=(title,message)=>dialog({title,message,yes:'Mengerti',single:true});
+const rupiah=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+const pad=n=>String(n).padStart(2,'0');
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+const dateTimeLocal=(d=new Date())=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+function parseLocalDateTime(v){const m=/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/.exec(String(v||''));if(!m)return null;const d=new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5]);return isNaN(d.getTime())?null:d}
+let state=loadState();
+function loadState(){try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&x.profile&&Array.isArray(x.transactions)){x.profile.cash=Number(x.profile.cash)||0;x.profile.bank=Number(x.profile.bank)||0;if(!timeOk(x.profile.jamBuka))x.profile.jamBuka=DEFAULT_OPEN;if(!timeOk(x.profile.jamTutup))x.profile.jamTutup=DEFAULT_CLOSE;x.transactions.forEach(t=>{if(t){if(t.type==='Transfer')t.type='Transfer Bank';delete t.method}});return x}}catch(e){}return {profile:{shop:'AR Sembako',agent:'Agen',account:'Rekening BRI',cash:5100000,bank:3130000,jamBuka:DEFAULT_OPEN,jamTutup:DEFAULT_CLOSE},transactions:[]}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));return true}catch(e){showToast('Gagal menyimpan data ke perangkat.','error');return false}}
+function money(id,n){document.getElementById(id).textContent=rupiah(n)}
+function operatingHours(){const p=state.profile||{};return {open:timeOk(p.jamBuka)?p.jamBuka:DEFAULT_OPEN,close:timeOk(p.jamTutup)?p.jamTutup:DEFAULT_CLOSE}}
+/* Cut-off: transaksi setelah jam tutup dicatat sebagai tanggal berikutnya (jam tetap). Sebelum jam buka tetap di hari itu juga. */
+function applyCutoff(when){
+ const h=operatingHours(),min=when.getHours()*60+when.getMinutes();
+ if(min>toMin(h.close))return {date:new Date(when.getFullYear(),when.getMonth(),when.getDate()+1,when.getHours(),when.getMinutes()),shifted:true};
+ return {date:when,shifted:false};
+}
+function updateCutoffHint(){const el=document.getElementById('txCutoffHint');if(el)el.textContent='Transaksi setelah jam '+operatingHours().close+' akan otomatis masuk ke laporan besoknya.'}
+function dateOf(t){const d=new Date(t.date);return isNaN(d.getTime())?new Date(0):d}
+/* Periode dihitung per tanggal kalender; transaksi bertanggal besok (hasil cut-off) baru masuk laporan saat harinya tiba. */
+function inRange(t,period){
+ const d=dateOf(t),now=new Date(),y=now.getFullYear(),m=now.getMonth(),dd=now.getDate();
+ const startToday=new Date(y,m,dd),endToday=new Date(y,m,dd+1);
+ if(['today','week','month','year'].includes(period)&&d>=endToday)return false;
+ if(period==='today')return d>=startToday;
+ if(period==='week')return d>=new Date(y,m,dd-6);
+ if(period==='month')return d.getMonth()===m&&d.getFullYear()===y;
+ if(period==='year')return d.getFullYear()===y;
+ return true;
+}
+function sums(list){return {fee:list.reduce((a,t)=>a+Number(t.fee),0),volume:list.reduce((a,t)=>a+Number(t.amount),0),count:list.length}}
+/* Pergerakan Cash+Bank satu transaksi (cermin aturan calcBalances, tanpa validasi; hanya untuk ringkasan) */
+function txDelta(t){const a=Number(t.amount)||0,f=Number(t.fee)||0;if(t.type==='Tarik Tunai')return {cash:-a+f,bank:a};if(t.type==='Setor Tunai')return {cash:a+f,bank:-a};return {cash:a+f,bank:-a}}
+function updateDashboard(){
+ const p=state.profile,tx=state.transactions;
+ document.getElementById('shopSubtitle').textContent=p.shop||'AR Sembako';
+ money('cashBalance',p.cash);money('bankBalance',p.bank);const d0=new Date(),startToday=new Date(d0.getFullYear(),d0.getMonth(),d0.getDate()),moved=tx.filter(t=>dateOf(t)>=startToday).reduce((a,t)=>{const m=txDelta(t);return a+m.cash+m.bank},0);
+ money('openingBalance',p.cash+p.bank-moved);money('closingBalance',p.cash+p.bank);
+ const daily=tx.filter(t=>inRange(t,'today')),s=sums(daily);
+ money('todayFee',s.fee);document.getElementById('todayCount').textContent=s.count+' Transaksi';
+ document.getElementById('bankLabel').textContent=p.account||'Rekening bank';
+ drawWeek();renderPreview();
+}
+function drawWeek(){
+ const svg=document.getElementById('weekChart'),now=new Date(),days=[];
+ for(let i=6;i>=0;i--){let d=new Date(now);d.setDate(now.getDate()-i);days.push(d)}
+ const vals=days.map(d=>state.transactions.filter(t=>dateOf(t).toDateString()===d.toDateString()).reduce((a,t)=>a+Number(t.fee),0));
+ const max=Math.max(1000,...vals),pts=vals.map((v,i)=>[14+i*68.5,116-(v/max)*90]);
+ let path=pts.map((p,i)=>(i?'L':'M')+p[0]+','+p[1]).join(' ');
+ svg.innerHTML='<defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#1671c8" stop-opacity=".25"/><stop offset="1" stop-color="#1671c8" stop-opacity=".02"/></linearGradient></defs>'+[25,55,85,115].map(y=>`<line x1="8" y1="${y}" x2="432" y2="${y}" stroke="#e9eef5" stroke-width="1"/>`).join('')+`<path d="${path} L${pts[6][0]},125 L${pts[0][0]},125 Z" fill="url(#area)"/><path d="${path}" fill="none" stroke="#1767ae" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>`+pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.2" fill="#1767ae"/>`).join('');
+ const total=vals.reduce((a,b)=>a+b,0);document.getElementById('trendText').textContent=total?`Total fee 7 hari: ${rupiah(total)} · Data berdasarkan transaksi tersimpan.`:'Catat transaksi untuk melihat perkembangan fee.';
+ document.getElementById('weekPeriod').textContent=days[0].toLocaleDateString('id-ID',{day:'numeric',month:'short'})+' – '+days[6].toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+}
+let previewPeriod='daily';
+function setReportPeriod(p,el){previewPeriod=p;document.querySelectorAll('.tabs .tab').forEach(x=>x.classList.remove('activeTab'));el.classList.add('activeTab');renderPreview()}
+function renderPreview(){
+ const now=new Date(),periods=[['daily','Laporan Harian','today'],['monthly','Laporan Bulanan','month'],['yearly','Laporan Tahunan','year']];
+ const chosen=periods.find(x=>x[0]===previewPeriod)||periods[0];
+ const list=periods.filter(x=>x[0]===previewPeriod).concat(periods.filter(x=>x[0]!==previewPeriod));
+ document.getElementById('reportPreview').innerHTML=list.map(([key,label,range])=>{const s=sums(state.transactions.filter(t=>inRange(t,range)));let sub=key==='daily'?now.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}):key==='monthly'?now.toLocaleDateString('id-ID',{month:'long',year:'numeric'}):now.getFullYear();return `<div class="reportrow"><div class="doc">▤</div><div><strong>${label}</strong><small>${sub}</small></div><div class="reportvalue">${rupiah(s.fee)} fee · ${s.count} transaksi</div></div>`}).join('');
+}
+function showPage(id,key){document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('selected',b.dataset.page===id));if(key==='transactions')renderTransactions();if(key==='reports')renderReports();if(key==='profile')fillProfile();window.scrollTo(0,0)}
+function openTransaction(type){const tp=(type==='Transfer'?'Transfer Bank':type)||'Tarik Tunai';document.getElementById('txForm').reset();document.getElementById('txType').value=TYPES.includes(tp)?tp:'Tarik Tunai';document.getElementById('txDate').value=dateTimeLocal();document.getElementById('txFee').value=5000;document.getElementById('modalTitle').textContent=type?document.getElementById('txType').value:'Transaksi Baru';onTypeChange();updateCutoffHint();hideCustomerSuggest();document.getElementById('txModal').classList.add('open')}
+/* ===== Buku kontak pelanggan (key terpisah dari data transaksi) ===== */
+const CUST_KEY='ar_sembako_customers';
+function getSavedCustomers(){
+ try{const a=JSON.parse(localStorage.getItem(CUST_KEY));if(!Array.isArray(a))return [];
+  return a.filter(c=>c&&typeof c.name==='string'&&c.name.trim()).map(c=>({name:c.name.trim(),phone:String(c.phone||''),account:String(c.account||'')}))}catch(e){return []}
+}
+function setSavedCustomers(list){try{localStorage.setItem(CUST_KEY,JSON.stringify(list));return true}catch(e){return false}}
+/* Tambah pelanggan baru, atau perbarui No HP / No Rekening bila nama sudah ada (isian kosong tidak menimpa data lama). Terbaru di urutan depan. */
+function saveCustomer(name,phone,account){
+ name=String(name||'').trim();if(!name)return;
+ const list=getSavedCustomers(),key=name.toLowerCase(),i=list.findIndex(c=>c.name.toLowerCase()===key);
+ const old=i>=0?list.splice(i,1)[0]:{phone:'',account:''};
+ list.unshift({name:old.name||name,phone:String(phone||'').trim()||old.phone,account:String(account||'').trim()||old.account});
+ setSavedCustomers(list);
+}
+function hideCustomerSuggest(){const b=document.getElementById('custSuggest');if(b)b.classList.remove('open')}
+function showCustomerSuggest(){
+ const box=document.getElementById('custSuggest');if(!box)return;
+ const q=document.getElementById('txCustomer').value.trim().toLowerCase();
+ let items=getSavedCustomers().filter(c=>!q||c.name.toLowerCase().includes(q));
+ if(q)items.sort((a,b)=>(b.name.toLowerCase().startsWith(q)?1:0)-(a.name.toLowerCase().startsWith(q)?1:0));
+ items=items.slice(0,6);
+ if(!items.length||(items.length===1&&items[0].name.toLowerCase()===q)){hideCustomerSuggest();return}
+ box.innerHTML='';
+ items.forEach(c=>{
+  const b=document.createElement('button');b.type='button';b.className='suggestitem';
+  b.onmousedown=e=>e.preventDefault();
+  b.appendChild(document.createTextNode(c.name));
+  const d=[c.phone,c.account].filter(Boolean).join(' · ');
+  if(d){const sm=document.createElement('small');sm.textContent=d;b.appendChild(sm)}
+  b.onclick=()=>pickCustomer(c);
+  box.appendChild(b);
+ });
+ box.classList.add('open');
+}
+function pickCustomer(c){
+ document.getElementById('txCustomer').value=c.name;
+ document.getElementById('txPhone').value=c.phone||'';
+ document.getElementById('txAccount').value=c.account||'';
+ hideCustomerSuggest();
+}
+let contactView=[];
+function openContacts(){renderContacts();document.getElementById('contactModal').classList.add('open')}
+function closeContacts(){document.getElementById('contactModal').classList.remove('open')}
+function renderContacts(){
+ const box=document.getElementById('contactList');box.innerHTML='';
+ contactView=getSavedCustomers().sort((a,b)=>a.name.localeCompare(b.name,'id'));
+ if(!contactView.length){const e=document.createElement('div');e.className='empty';e.textContent='Belum ada pelanggan tersimpan. Nama pelanggan otomatis tersimpan saat Anda menyimpan transaksi.';box.appendChild(e);return}
+ contactView.forEach(c=>{
+  const row=document.createElement('div');row.className='tx';row.style.marginBottom='8px';
+  const ic=document.createElement('div');ic.className='txicon';ic.textContent=c.name.charAt(0).toUpperCase();
+  const info=document.createElement('div');info.className='txinfo';
+  const st=document.createElement('strong');st.textContent=c.name;
+  const sm=document.createElement('small');
+  sm.textContent=[c.phone?c.phone+' (No. HP)':'',c.account?c.account+' (No. Rek/E-Wallet)':''].filter(Boolean).join(' · ')||'Tanpa No. HP / No. Rekening';
+  info.appendChild(st);info.appendChild(sm);
+  const del=document.createElement('button');del.type='button';del.className='danger';del.style.padding='8px 11px';del.style.fontSize='12px';del.textContent='Hapus';
+  del.onclick=()=>deleteCustomer(c.name);
+  row.appendChild(ic);row.appendChild(info);row.appendChild(del);box.appendChild(row);
+ });
+}
+async function deleteCustomer(name){
+ const ok=await appConfirm('Hapus pelanggan?','Hapus "'+name+'" dari Buku Kontak? Riwayat transaksi tidak terpengaruh.','Ya, hapus','Tidak',true);
+ if(!ok)return;
+ setSavedCustomers(getSavedCustomers().filter(c=>c.name.toLowerCase()!==name.toLowerCase()));
+ renderContacts();showToast('Kontak dihapus.');
+}
+/* ===== Backup & restore (state + buku kontak dalam satu file JSON) ===== */
+function backupData(){
+ try{
+  const payload={app:'AR Sembako',version:1,date:new Date().toISOString(),data:{state:state,customers:getSavedCustomers()}};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='Backup_BRILink_AR_Sembako_'+today()+'.json';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);showToast('Backup dibuat: '+a.download);
+ }catch(e){showToast('Backup gagal di perangkat ini.','error')}
+}
+function triggerRestore(){const f=document.getElementById('restoreFile');f.value='';f.click()}
+function normalizeRestoredState(src){
+ const pr=src.profile;
+ const profile={...pr,shop:String(pr.shop||'AR Sembako'),agent:String(pr.agent||'Agen'),account:String(pr.account||'Rekening BRI'),cash:Number(pr.cash)||0,bank:Number(pr.bank)||0,jamBuka:timeOk(pr.jamBuka)?pr.jamBuka:DEFAULT_OPEN,jamTutup:timeOk(pr.jamTutup)?pr.jamTutup:DEFAULT_CLOSE};
+ const all=src.transactions.map(t=>{if(!t||typeof t!=='object')return null;const o={...t,amount:Number(t.amount),fee:Number(t.fee)||0};if(o.type==='Transfer')o.type='Transfer Bank';delete o.method;return o});
+ const ok=all.filter(o=>o&&TYPES.includes(o.type)&&Number.isFinite(o.amount)&&o.amount>=0&&!isNaN(new Date(o.date).getTime()));
+ return {state:{...src,profile,transactions:ok},dropped:all.length-ok.length};
+}
+function restoreData(ev){
+ const file=ev.target.files&&ev.target.files[0];if(!file)return;
+ if(file.size>15*1024*1024){showToast('File backup tidak valid.','error');return}
+ const rd=new FileReader();
+ rd.onerror=()=>showToast('File backup tidak valid.','error');
+ rd.onload=async()=>{
+  let d=null;
+  try{d=JSON.parse(rd.result)}catch(e){}
+  const st=d&&d.data&&d.data.state;
+  if(!st||!st.profile||typeof st.profile!=='object'||Array.isArray(st.profile)||!Array.isArray(st.transactions)){showToast('File backup tidak valid.','error');return}
+  const bd=new Date(d.date),label=isNaN(bd.getTime())?'yang tidak diketahui':bd.toLocaleString('id-ID',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const yes=await appConfirm('Pulihkan data?','Data saat ini akan DIGANTI dengan data dari backup tanggal '+label+'. Lanjutkan?','Ya, pulihkan','Batal',true);
+  if(!yes)return;
+  const r=normalizeRestoredState(st);
+  let cs=null;
+  if(Array.isArray(d.data.customers))cs=d.data.customers.filter(c=>c&&typeof c.name==='string'&&c.name.trim()).map(c=>({name:c.name.trim(),phone:String(c.phone||''),account:String(c.account||'')}));
+  state=r.state;
+  if(cs!==null)setSavedCustomers(cs);
+  if(persist()){
+   updateDashboard();renderTransactions();renderReports();fillProfile();
+   showToast('Data berhasil dipulihkan ('+state.transactions.length+' transaksi'+(r.dropped?', '+r.dropped+' entri rusak dilewati':'')+').');
+  }
+ };
+ rd.readAsText(file);
+}
+function closeModal(){document.getElementById('txModal').classList.remove('open')}
+/* Aturan saldo otomatis (pelanggan selalu bayar/terima tunai; uang hanya berputar di Cash dan Rekening/Deposit):
+   Tarik Tunai : Cash -nominal, Rekening +nominal, Cash +fee
+   Setor Tunai : Cash +nominal, Rekening -nominal, Cash +fee
+   Transfer Bank / E-Wallet / PPOB : Rekening -nominal, Cash +nominal (pelanggan bayar tunai), Cash +fee */
+function calcBalances(type,amount,fee){
+ let cash=Number(state.profile.cash)||0,bank=Number(state.profile.bank)||0;
+ if(type==='Tarik Tunai'){
+  if(cash<amount)return {error:'Saldo Cash tidak cukup untuk menyerahkan uang tunai '+rupiah(amount)+'. Saldo Cash saat ini '+rupiah(cash)+'.'};
+  cash-=amount;bank+=amount;
+ }else{
+  if(bank<amount)return {error:'Saldo Rekening (Deposit) tidak cukup untuk '+type+' '+rupiah(amount)+'. Saldo Rekening saat ini '+rupiah(bank)+'.'};
+  bank-=amount;cash+=amount;
+ }
+ cash+=fee;
+ return {cash,bank};
+}
+function onTypeChange(){
+ const t=document.getElementById('txType').value,lbl=document.getElementById('txAmount').previousElementSibling;
+ document.getElementById('txProviderField').style.display=t==='E-Wallet'?'':'none';
+ if(lbl)lbl.textContent=t==='PPOB (Pulsa/Token)'?'Nominal pulsa / token (Rp)':'Nominal transaksi (Rp)';
+}
+function saveTransaction(e){
+ e.preventDefault();
+ const type=document.getElementById('txType').value,amount=Number(document.getElementById('txAmount').value),fee=Number(document.getElementById('txFee').value);
+ if(!Number.isFinite(amount)||amount<1||!Number.isFinite(fee)||fee<0){showToast('Periksa nominal dan fee.','error');return}
+ const provider=type==='E-Wallet'?document.getElementById('txProvider').value:'';
+ if(type==='E-Wallet'&&!provider){showToast('Pilih provider e-wallet terlebih dahulu.','error');return}
+ const raw=document.getElementById('txDate').value,when=raw?parseLocalDateTime(raw):new Date();
+ if(!when){showToast('Format tanggal dan waktu tidak valid.','error');return}
+ const cut=applyCutoff(when);
+ const r=calcBalances(type,amount,fee);
+ if(r.error){appAlert('Saldo tidak cukup',r.error+' Perbaiki saldo di menu Profil bila catatan tidak sesuai kondisi sebenarnya.');return}
+ state.profile.cash=r.cash;state.profile.bank=r.bank;
+ state.transactions.unshift({id:Date.now(),type,amount,fee,provider,customer:document.getElementById('txCustomer').value.trim(),phone:document.getElementById('txPhone').value.trim(),account:document.getElementById('txAccount').value.trim(),note:document.getElementById('txNote').value,date:cut.date.toISOString()});
+ saveCustomer(state.transactions[0].customer,state.transactions[0].phone,state.transactions[0].account);
+ persist();closeModal();updateDashboard();renderTransactions();renderReports();showToast(cut.shifted?'Transaksi disimpan di luar jam operasional, dihitung sebagai transaksi tanggal '+cut.date.toLocaleDateString('id-ID',{day:'numeric',month:'short'})+'.':'Transaksi berhasil disimpan.');
+}
+function txHtml(t){
+ const ic={'Tarik Tunai':'↓','Setor Tunai':'↑','Transfer Bank':'↗','E-Wallet':'◎','PPOB (Pulsa/Token)':'▤'},icon=ic[t.type]||'↗';
+ const d=dateOf(t).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+ const parts=[esc(d),esc(t.provider||'Tunai')];
+ if(t.phone)parts.push(esc(t.phone)+' (No. HP)');
+ if(t.account)parts.push(esc(t.account)+' (No. Rek/E-Wallet)');
+ return `<div class="tx"><div class="txicon">${icon}</div><div class="txinfo"><strong>${esc(t.type)}${t.customer?' · '+esc(t.customer):''}</strong><small>${parts.join(' · ')}</small></div><div class="txamt">${rupiah(t.amount)}<small>Fee ${rupiah(t.fee)}</small></div></div>`}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderTransactions(){const q=(document.getElementById('searchTx')?.value||'').toLowerCase(),f=document.getElementById('filterTx')?.value||'all';const list=state.transactions.filter(t=>(f==='all'||t.type===f)&&[t.type,t.customer,t.note,t.provider,t.phone,t.account].join(' ').toLowerCase().includes(q));document.getElementById('txList').innerHTML=list.length?list.map(txHtml).join(''):'<div class="panel empty"><b>▤</b>Belum ada transaksi yang cocok.</div>'}
+function renderReports(){
+ const period=document.getElementById('reportFilter')?.value||'today',list=state.transactions.filter(t=>inRange(t,period)),s=sums(list);
+ money('reportFee',s.fee);document.getElementById('reportCount').textContent=s.count;money('reportVolume',s.volume);
+ document.getElementById('reportBreakdown').innerHTML=TYPES.map(type=>{const a=list.filter(t=>t.type===type),z=sums(a);return `<div class="reportrow"><div><strong>${type}</strong><small>${z.count} transaksi · volume ${rupiah(z.volume)}</small></div><div class="reportvalue">${rupiah(z.fee)} fee</div></div>`}).join('');
+ document.getElementById('reportTxList').innerHTML=list.length?list.map(txHtml).join(''):'<div class="panel empty">Belum ada data pada periode ini.</div>';
+}
+function fillProfile(){const p=state.profile;document.getElementById('profileShop').value=p.shop||'';document.getElementById('profileAgent').value=p.agent||'';document.getElementById('profileAccount').value=p.account||'';document.getElementById('profileCash').value=p.cash;document.getElementById('profileBank').value=p.bank;const h=operatingHours();document.getElementById('profileOpen').value=h.open;document.getElementById('profileClose').value=h.close}
+function openSettings(){showPage('profilePage','profile')}
+function saveProfile(){const p=state.profile;const jb=document.getElementById('profileOpen').value||DEFAULT_OPEN,jt=document.getElementById('profileClose').value||DEFAULT_CLOSE;if(!timeOk(jb)||!timeOk(jt)||toMin(jt)<=toMin(jb)){showToast('Jam tutup harus lebih akhir dari jam buka.','error');return}p.jamBuka=jb;p.jamTutup=jt;p.shop=document.getElementById('profileShop').value.trim()||'AR Sembako';p.agent=document.getElementById('profileAgent').value.trim()||'Agen';p.account=document.getElementById('profileAccount').value.trim()||'Rekening bank';p.cash=Math.max(0,Number(document.getElementById('profileCash').value)||0);p.bank=Math.max(0,Number(document.getElementById('profileBank').value)||0);if(persist()){updateDashboard();showToast('Pengaturan tersimpan. Saldo yang diisi menjadi saldo saat ini.')}}
+function exportCSV(){try{const rows=[['Tanggal','Jenis','Nominal','Fee','Provider','Pelanggan','No. HP','No. Rekening / E-Wallet','Catatan'],...state.transactions.map(t=>[new Date(t.date).toLocaleString('id-ID'),t.type,t.amount,t.fee,t.provider||'Tunai',t.customer,t.phone||'',t.account||'',t.note])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='laporan-ar-sembako.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);showToast('Laporan CSV dibuat.')}catch(e){showToast('Ekspor CSV gagal di perangkat ini.','error')}}
+function printReport(){try{window.print()}catch(e){showToast('Cetak tidak tersedia di perangkat ini. Gunakan Ekspor CSV.','error')}}
+async function resetData(){
+ const ok=await appConfirm('Hapus semua transaksi?','Seluruh riwayat transaksi akan dihapus dan saldo kembali ke saldo awal contoh. Tindakan ini tidak dapat dibatalkan.','Ya, hapus','Tidak',true);
+ if(!ok)return;
+ state={profile:{shop:'AR Sembako',agent:'Agen',account:'Rekening BRI',cash:5100000,bank:3130000,jamBuka:operatingHours().open,jamTutup:operatingHours().close},transactions:[]};
+ persist();updateDashboard();renderTransactions();renderReports();fillProfile();showToast('Data transaksi telah dihapus.');
+}
+document.getElementById('clock').textContent=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+updateDashboard();renderTransactions();renderReports();
+</script>
+</body>
+</html>
