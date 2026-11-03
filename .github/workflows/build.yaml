@@ -1,0 +1,79 @@
+name: Build APK BRILink
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install Capacitor CLI
+        run: npm install -g @capacitor/cli @capacitor/core @capacitor/android
+
+      - name: Initialize Capacitor Project
+        run: |
+          npm init -y
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npx cap init "AR Sembako BRILink" "com.arsembako.brilink" --web-dir=www
+
+      - name: Add Android Platform
+        run: npx cap add android
+
+      - name: Sync Web Assets
+        run: npx cap sync android
+
+      - name: Fix Kotlin Duplicate Class Issue
+        run: |
+          echo "
+          configurations.all {
+              resolutionStrategy {
+                  force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+                  force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+                  force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
+              }
+          }
+          " >> android/app/build.gradle
+
+      - name: Replace App Icons
+        run: |
+          if [ -f "www/icon.png" ]; then
+            echo "Menyalin ikon kustom ke folder Android..."
+            rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+            rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+            cp www/icon.png android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+            cp www/icon.png android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+            cp www/icon.png android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+            cp www/icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+            cp www/icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          else
+            echo "Peringatan: www/icon.png tidak ditemukan, memakai ikon default Capacitor."
+          fi
+
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AR-Sembako-BRILink-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
